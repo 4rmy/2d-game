@@ -1,4 +1,5 @@
 To Do:
+fix - World Gen
     - Make the world infinite by generating new chunks when they come on screen
 fix - Check if a chunk is off screen. If so do not render it.
 

@@ -1,9 +1,11 @@
 To Do:
-fix - World Gen
+fix - Camera Movement
     - Make the world infinite by generating new chunks when they come on screen
-fix - Check if a chunk is off screen. If so do not render it.
 
 Done:
     - Chunk Generation
     - Chunk Rendering
-    - Camera Movement
+    - World Rendering
+
+Removed
+    - Offscreen chunk check

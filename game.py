@@ -23,9 +23,10 @@ class Game():
         
         colorama.init()
 
-        self.world = []
+        self.world = [[0 for x in range(4)] for y in range(4)]
         self.ChunkList = []
-        self.chunkOffset = 0
+        self.chunkOffX = 0
+        self.chunkOffY = 0
         self.seed = seed
         self.furthestGen = 0
         self.nearestGen = 0
@@ -35,6 +36,7 @@ class Game():
         self.camY = 0
         self.speed = 5
         self.chunksRendered = 0
+        self.chunkDir = "chunks\\"
 
         self.log("    Game initialization    ")
         self.log("---=========Log=========---")
@@ -56,14 +58,58 @@ class Game():
     
     # Render All Chunks (Can be optimized by not rendering chunks offscreen)
     def render(self, display, tilesize, w, h):
-        # Loop world chunks
-        for c in range(len(self.world)):
-            # Loop through chunk map height
-            for y in range(len(self.world[c].map)):
-                # Loop through chunk map width
-                for x in range(len(self.world[c].map[y])):
-                    # Draw square based on color and tile size
-                    pygame.draw.rect(display, self.world[c].map[y][x], ((x*tilesize) + (self.world[c].x * tilesize * len(self.world[c].map[y])) + self.camX, (y*tilesize) + (self.world[c].y * tilesize * len(self.world[c].map)) + self.camY, tilesize, tilesize))
+        
+        # Create Temp world
+        tempMap = self.world
+
+        # loop through chunk y values
+        for cy in range(len(tempMap)):
+            # loop through chunk x values
+            for cx in range(len(tempMap[cy])):
+                # store chunk into temp storage
+                tempChunk = tempMap[cy][cx]
+                # parse chunk heights
+                tempChunk = tempChunk.split('\n')
+                # remove extra line
+                tempChunk = tempChunk[:-1]
+                # loop through chunk height
+                for y in range(len(tempChunk)):
+                    # split height by tile
+                    tempChunk[y] = tempChunk[y].split(',')
+                    # loop through tiles in that height
+                    for x in range(len(tempChunk[y])):
+                        # create color values
+                        water = (0, 82, 214)
+                        sand = (188, 219, 125)
+                        grass = (36, 163, 49)
+                        lowStone = (87, 87, 87)
+                        medStone = (130,130,130)
+                        hiStone = (166, 166, 166)
+                        Snow = (227, 227, 227)
+                        # parse chunk values
+                        if tempChunk[y][x] == "0":
+                            color = water
+                        elif tempChunk[y][x] == "1":
+                            color = sand
+                        elif tempChunk[y][x] == "2":
+                            color = grass
+                        elif tempChunk[y][x] == "3":
+                            color = lowStone
+                        elif tempChunk[y][x] == "4":
+                            color = medStone
+                        elif tempChunk[y][x] == "5":
+                            color = hiStone
+                        elif tempChunk[y][x] == "6":
+                            color = Snow
+                        # draw tile to the display
+                        pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50), y * tilesize + (cy * tilesize * 50), tilesize, tilesize))
+                        
+        
+                        
+                        
+                
+                    
+                    
         
     # Chunk Generation
     def genChunk(self, cx, cy, cw, ch, seed):
@@ -85,13 +131,13 @@ class Game():
 
         # Parse map values and set state of block
         # Color values
-        water = (0, 82, 214)
-        sand = (188, 219, 125)
-        grass = (36, 163, 49)
-        lowStone = (87, 87, 87)
-        medStone = (130,130,130)
-        hiStone = (166, 166, 166)
-        Snow = (227, 227, 227)
+        water = "0"
+        sand = "1"
+        grass = "2"
+        lowStone = "3"
+        medStone = "4"
+        hiStone = "5"
+        Snow = "6"
         #loop through values and set position rgb
 
         for y in range(len(self.chunk.map)):
@@ -111,10 +157,38 @@ class Game():
                 else:
                     self.chunk.map[y][x] = Snow
 
-        self.ChunkList.append(self.chunk)
+        data = ""
+        f = open(self.chunkDir + str(self.chunk.x) + "-" + str(self.chunk.y) + ".txt", "a")
+        for y in range(len(self.chunk.map)):
+            line = ""
+            for x in range(len(self.chunk.map[y])):
+                if x != 0:
+                    line += "," + str(self.chunk.map[y][x])
+                else:
+                    line += str(self.chunk.map[y][x])
+
+            data += line + "\n"
+        f.write(data)
+        f.close
+        
         self.log("Generated new Chunk: Chunk(x: " + str(self.chunk.x) + ", y: " + str(self.chunk.y) + ")")
         self.chunk = {}
     
     # Try to generate a chunk if the view is not full of chunks
     def tryChunkGen(self):
-        pass
+        exist = False
+        for y in range(4):
+            for x in range(4):
+                exist = False
+                for file in os.listdir(self.chunkDir):
+                    file = file.split(".txt")
+                    file = file[0]
+                    file = file.split("-")
+                    if int(file[0]) == x + self.chunkOffX:
+                        if int(file[1]) == y + self.chunkOffY:
+                            exist = True
+                            f = open(self.chunkDir + file[0] + "-" + file[1] + ".txt", "r")
+                            self.world[y][x] = f.read()
+                if exist == False:
+                    self.log("Chunk not found at x:" + str(x) + ", y:" + str(y))
+                    self.genChunk(x + self.chunkOffX, y + self.chunkOffY, 50, 50, self.seed)

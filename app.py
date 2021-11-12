@@ -35,11 +35,6 @@ pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 running = True
 
-for i in range(4):
-    for j in range(4):
-        game.genChunk(i, j, 50, 50, seed)
-
-
 frameTime = time.time()
 
 # Save Function

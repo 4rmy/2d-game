@@ -1,4 +1,4 @@
-import os, pygame, numpy, time, colorama, noise
+import os, pygame, time, colorama, noise
 from chunk import Chunk
 import win32gui, win32con
 
@@ -104,13 +104,6 @@ class Game():
                         # draw tile to the display
                         pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50), y * tilesize + (cy * tilesize * 50), tilesize, tilesize))
                         
-        
-                        
-                        
-                
-                    
-                    
-        
     # Chunk Generation
     def genChunk(self, cx, cy, cw, ch, seed):
         # Create basic chunk

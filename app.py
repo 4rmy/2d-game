@@ -1,4 +1,4 @@
-import pygame, numpy, noise, game, sys, time, os
+import pygame, game, sys, time, os
 from random import randint
 
 try:

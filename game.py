@@ -169,6 +169,7 @@ class Game():
     
     # Try to generate a chunk if the view is not full of chunks
     def tryChunkGen(self):
+        chunktest = True
         exist = False
         for y in range(4):
             for x in range(4):
@@ -183,5 +184,7 @@ class Game():
                             f = open(self.chunkDir + file[0] + "-" + file[1] + ".txt", "r")
                             self.world[y][x] = f.read()
                 if exist == False:
+                    chunktest = False
                     self.log("Chunk not found at x:" + str(x) + ", y:" + str(y))
                     self.genChunk(x + self.chunkOffX, y + self.chunkOffY, 50, 50, self.seed)
+        return chunktest

@@ -73,15 +73,15 @@ while running:
     screen.fill((0,0,0))
 
     w, h = pygame.display.get_surface().get_size()
-    game.tryChunkGen()
-    game.render(screen, tilesize, w, h)
+    if game.tryChunkGen():
+        game.render(screen, tilesize, w, h)
     
-    # Draw FPS in top right
-    screen.blit(update_fps(), (10,0))
+        # Draw FPS in top right
+        screen.blit(update_fps(), (10,0))
 
-    # Update display
-    pygame.display.update()
-    clock.tick()
+        # Update display
+        pygame.display.update()
+        clock.tick()
 
 save()
 

@@ -102,7 +102,7 @@ class Game():
                         elif tempChunk[y][x] == "6":
                             color = Snow
                         # draw tile to the display
-                        pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50), y * tilesize + (cy * tilesize * 50), tilesize, tilesize))
+                        pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50) + self.camX, y * tilesize + (cy * tilesize * 50) + self.camY, tilesize, tilesize))
                         
     # Chunk Generation
     def genChunk(self, cx, cy, cw, ch, seed):

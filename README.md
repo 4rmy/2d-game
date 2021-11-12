@@ -3,7 +3,9 @@
 This game is a top-down 2d civilization game inwhich the player controls a
 civilization that tries to survive against other civilization and 
 the wilderness.
-
+# How to play
+To play open the folder and run the 'start.bat' file.\
+To exit the game press the escape key.
 # Libraries used
 # Pygame
 Pygame is one of the many backbones to this project. Pygame handles the game window

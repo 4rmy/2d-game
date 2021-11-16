@@ -1,5 +1,6 @@
-import pygame, game, sys, time, os
+import pygame, game, sys, time, os, numpy
 from random import randint
+
 
 try:
     if sys.argv[1] == "debug=true":
@@ -16,8 +17,7 @@ except:
     seed = randint(1,10000)
 
 # Set standard tile size
-tilesize = 10
-
+renderDis = 3
 # Game font for FPS
 clock = pygame.time.Clock()
 def update_fps():
@@ -26,14 +26,18 @@ def update_fps():
     fps_text = font.render(fps, 1, pygame.Color("coral"))
     return fps_text
 
-# Init Game Class
-game = game.Game(seed,errorLog=Debug)
-game.log("Playing on seed: " + str(seed))
-
 # Init game window (Fullscreen)
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 running = True
+
+w, h = pygame.display.get_surface().get_size()
+tilesize = numpy.ceil(w/((renderDis - 2)*50))
+
+game = game.Game(seed,tilesize,errorLog=Debug)
+game.log("Playing on seed: " + str(seed))
+
+game.renderDis = renderDis
 
 frameTime = time.time()
 
@@ -67,12 +71,15 @@ while running:
         game.camX += game.speed * (dt * 100)
     if keys[pygame.K_d]:
         game.camX -= game.speed * (dt * 100)
+    if keys[pygame.K_SPACE]:
+        game.resetPos()
     if keys[pygame.K_ESCAPE]:
         running = False
 
     screen.fill((0,0,0))
 
     w, h = pygame.display.get_surface().get_size()
+    game.chunkMove()
     if game.tryChunkGen():
         game.render(screen, tilesize, w, h)
     

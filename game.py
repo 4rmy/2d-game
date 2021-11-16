@@ -4,7 +4,7 @@ import win32gui, win32con
 
 class Game():
     # Init class values
-    def __init__(self, seed, errorLog=False):
+    def __init__(self, seed, tilesize, errorLog=False):
 
         if errorLog == False:
             hide = win32gui.GetForegroundWindow()
@@ -23,7 +23,9 @@ class Game():
         
         colorama.init()
 
-        self.world = [[0 for x in range(4)] for y in range(4)]
+        self.renderDis = 3
+        self.world = [[0 for x in range(self.renderDis)] for y in range(self.renderDis)]
+        self.tilesize = tilesize
         self.ChunkList = []
         self.chunkOffX = 0
         self.chunkOffY = 0
@@ -32,11 +34,20 @@ class Game():
         self.nearestGen = 0
         self.firstRender = 0
         self.tempCNum = 0
-        self.camX = 0
-        self.camY = 0
-        self.speed = 5
+        self.camX = -(self.tilesize * 50)
+        self.camY = -(self.tilesize * 50)
+        self.speed = 10
         self.chunksRendered = 0
-        self.chunkDir = "chunks\\"
+
+        self.chunkDir = "chunks\\" + str(self.seed) + "\\"
+        try:
+            os.mkdir("chunks\\")
+        except:
+            pass
+        try:
+            os.mkdir(self.chunkDir)
+        except:
+            pass
 
         self.log("    Game initialization    ")
         self.log("---=========Log=========---")
@@ -101,6 +112,8 @@ class Game():
                             color = hiStone
                         elif tempChunk[y][x] == "6":
                             color = Snow
+                        else:
+                            color = (0,0,0)
                         # draw tile to the display
                         pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50) + self.camX, y * tilesize + (cy * tilesize * 50) + self.camY, tilesize, tilesize))
                         
@@ -151,7 +164,7 @@ class Game():
                     self.chunk.map[y][x] = Snow
 
         data = ""
-        f = open(self.chunkDir + str(self.chunk.x) + "-" + str(self.chunk.y) + ".txt", "a")
+        f = open(self.chunkDir + str(self.chunk.x) + "=" + str(self.chunk.y) + ".txt", "a")
         for y in range(len(self.chunk.map)):
             line = ""
             for x in range(len(self.chunk.map[y])):
@@ -171,20 +184,46 @@ class Game():
     def tryChunkGen(self):
         chunktest = True
         exist = False
-        for y in range(4):
-            for x in range(4):
+        for y in range(self.renderDis):
+            for x in range(self.renderDis):
                 exist = False
                 for file in os.listdir(self.chunkDir):
                     file = file.split(".txt")
                     file = file[0]
-                    file = file.split("-")
+                    file = file.split("=")
                     if int(file[0]) == x + self.chunkOffX:
                         if int(file[1]) == y + self.chunkOffY:
                             exist = True
-                            f = open(self.chunkDir + file[0] + "-" + file[1] + ".txt", "r")
+                            f = open(self.chunkDir + file[0] + "=" + file[1] + ".txt", "r")
                             self.world[y][x] = f.read()
                 if exist == False:
                     chunktest = False
                     self.log("Chunk not found at x:" + str(x) + ", y:" + str(y))
                     self.genChunk(x + self.chunkOffX, y + self.chunkOffY, 50, 50, self.seed)
         return chunktest
+    
+    # Chunk move check
+    def chunkMove(self):
+        # check if camera moved right
+        if self.camX < -2 * self.tilesize * 50:
+            self.camX = -(self.tilesize * 50)
+            self.chunkOffX += 1
+        # chunk if camera moved left
+        if self.camX > 0:
+            self.camX = -(self.tilesize * 50)
+            self.chunkOffX -= 1
+        # check if camera moved up
+        if self.camY < -2 * self.tilesize * 50:
+            self.camY = -(self.tilesize * 50)
+            self.chunkOffY += 1
+        # chunk if camera moved down
+        if self.camY > 0:
+            self.camY = -(self.tilesize * 50)
+            self.chunkOffY -= 1
+    
+    # Reset camera position
+    def resetPos(self):
+        self.chunkOffY = 0
+        self.chunkOffX = 0
+        self.camX = -(self.tilesize * 50)
+        self.camY = -(self.tilesize * 50)

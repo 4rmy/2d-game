@@ -1,11 +1,11 @@
 To Do:
-fix - Camera Movement
-    - Make the world infinite by generating new chunks when they come on screen
-
+    -Add world border (So seeds do not overlap and each world doesnt take up 10TB storage)
 Done:
+    - Camera Movement
     - Chunk Generation
     - Chunk Rendering
     - World Rendering
+    - Infinite World
 
 Removed
     - Offscreen chunk check

@@ -38,6 +38,15 @@ class Game():
         self.camY = -(self.tilesize * 50)
         self.speed = 10
         self.chunksRendered = 0
+        self.colors = {
+            "0": {"type": "color", "color": (0, 82, 214)},
+            "1": {"type": "color", "color": (188, 219, 125)},
+            "2": {"type": "color", "color": (36, 163, 49)},
+            "3": {"type": "color", "color": (87, 87, 87)},
+            "4": {"type": "color", "color": (130,130,130)},
+            "5": {"type": "color", "color": (166, 166, 166)},
+            "6": {"type": "color", "color": (227, 227, 227)},
+        }
 
         self.chunkDir = "chunks\\" + str(self.seed) + "\\"
         try:
@@ -89,31 +98,10 @@ class Game():
                     tempChunk[y] = tempChunk[y].split(',')
                     # loop through tiles in that height
                     for x in range(len(tempChunk[y])):
-                        # create color values
-                        water = (0, 82, 214)
-                        sand = (188, 219, 125)
-                        grass = (36, 163, 49)
-                        lowStone = (87, 87, 87)
-                        medStone = (130,130,130)
-                        hiStone = (166, 166, 166)
-                        Snow = (227, 227, 227)
-                        # parse chunk values
-                        if tempChunk[y][x] == "0":
-                            color = water
-                        elif tempChunk[y][x] == "1":
-                            color = sand
-                        elif tempChunk[y][x] == "2":
-                            color = grass
-                        elif tempChunk[y][x] == "3":
-                            color = lowStone
-                        elif tempChunk[y][x] == "4":
-                            color = medStone
-                        elif tempChunk[y][x] == "5":
-                            color = hiStone
-                        elif tempChunk[y][x] == "6":
-                            color = Snow
-                        else:
-                            color = (0,0,0)
+                        
+                        color = self.colors.get(tempChunk[y][x], {"type": "color", "color": (0,0,0)})
+                        if color["type"] == "color":
+                            color = color["color"]
                         # draw tile to the display
                         pygame.draw.rect(display, color, pygame.Rect(x * tilesize + (cx * tilesize * 50) + self.camX, y * tilesize + (cy * tilesize * 50) + self.camY, tilesize, tilesize))
                         

@@ -1,3 +1,2 @@
-Python\python.exe app.py debug=true
-pause
+Python\python.exe app.py debug=trues
 exit

@@ -1,2 +1,3 @@
-Python\python.exe app.py debug=trues
+pyembed\python.exe app.py debug=true
+pause
 exit
